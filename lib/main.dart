@@ -8,14 +8,26 @@ import 'app/data/http/http.dart';
 import 'app/data/repositories_implementation/account_repository_impl.dart';
 import 'app/data/repositories_implementation/authentication_repository_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repository_impl.dart';
+import 'app/data/services/local/session_service.dart';
+import 'app/data/services/remote/account_api.dart';
 import 'app/data/services/remote/authentication_api.dart';
 import 'app/data/services/remote/internet_checker.dart';
 import 'app/domain/repositories/account_repository.dart';
 import 'app/domain/repositories/authentication_repository.dart';
 import 'app/domain/repositories/connectivity_repository.dart';
 import 'app/my_app.dart';
+import 'app/presentation/global/controllers/session_controller.dart';
 
 main() {
+  final sessionService = SessionService(
+    const FlutterSecureStorage(),
+  );
+  final httpService = Http(
+    client: http.Client(),
+    baseUrl: 'https://api.themoviedb.org/3',
+    token:
+        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzEyN2Y3ZGQ2MGViOTFmOWQwMzdkMGU1ZWZjNTlkOSIsInN1YiI6IjYxZjMzZGMyYTZmZGFhMDBjNDkxMjkyNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Ee9VlY2TQ11oB9gWMXl9d87XDJ1owgDNBrRO5sEeO7o',
+  );
   runApp(MultiProvider(
     providers: [
       Provider<ConnectivityRepository>(
@@ -26,16 +38,20 @@ main() {
       ),
       Provider<AuthenticationRepository>(
         create: (_) => AuthenticationRepositoryImpl(
-          const FlutterSecureStorage(),
-          AuthenticationAPI(Http(
-            client: http.Client(),
-            baseUrl: 'https://api.themoviedb.org/3',
-            token:
-                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzEyN2Y3ZGQ2MGViOTFmOWQwMzdkMGU1ZWZjNTlkOSIsInN1YiI6IjYxZjMzZGMyYTZmZGFhMDBjNDkxMjkyNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Ee9VlY2TQ11oB9gWMXl9d87XDJ1owgDNBrRO5sEeO7o',
-          )),
+          AuthenticationAPI(httpService),
+          sessionService,
+          AccountAPI(httpService),
         ),
       ),
-      Provider<AccountRepository>(create: (_) => AccountRepositoryImpl())
+      Provider<AccountRepository>(
+          create: (_) => AccountRepositoryImpl(
+                AccountAPI(httpService),
+                sessionService,
+              )),
+      ChangeNotifierProvider<SessionController>(
+          create: (context) => SessionController(
+                authenticationRepository: context.read(),
+              )),
     ],
     child: const MyApp(),
   ));

@@ -116,6 +116,8 @@ class Http {
       };
 
       if (statusCode >= 200 && statusCode < 300) {
+        print(responseBody);
+
         return Either.right(onSuccess(responseBody));
       }
       return Either.left(HttpFailure(statusCode: statusCode));
