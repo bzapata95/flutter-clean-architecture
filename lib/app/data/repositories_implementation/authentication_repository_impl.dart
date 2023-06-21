@@ -36,31 +36,31 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   ) async {
     final requestToken = await _authenticationAPI.createRequestToken();
 
-    if (requestToken == null) return Either.left(SignInFailure.unknown);
+    return requestToken.when((failure) {
+      return Either.left(failure);
+    }, (requestToken) async {
+      final loginResult = await _authenticationAPI.createSessionWithLogin(
+        username: username,
+        password: password,
+        requestToken: requestToken,
+      );
 
-    print('requestToken: $requestToken');
+      return loginResult.when(
+        (failure) async => Either.left(failure),
+        (newRequestToken) async {
+          final sessionResult =
+              await _authenticationAPI.createSession(newRequestToken);
 
-    final loginResult = await _authenticationAPI.createSessionWithLogin(
-      username: username,
-      password: password,
-      requestToken: requestToken,
-    );
-
-    return loginResult.when(
-      (failure) async => Either.left(failure),
-      (newRequestToken) async {
-        final sessionResult =
-            await _authenticationAPI.createSession(newRequestToken);
-
-        return sessionResult.when(
-          (failure) async => Either.left(failure),
-          (sessionId) async {
-            await _flutterSecureStorage.write(key: _key, value: sessionId);
-            return Either.right(User());
-          },
-        );
-      },
-    );
+          return sessionResult.when(
+            (failure) async => Either.left(failure),
+            (sessionId) async {
+              await _flutterSecureStorage.write(key: _key, value: sessionId);
+              return Either.right(User());
+            },
+          );
+        },
+      );
+    });
   }
 
   @override
