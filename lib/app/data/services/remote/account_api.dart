@@ -13,7 +13,7 @@ class AccountAPI {
         'session_id': sessionId,
       },
       onSuccess: (json) {
-        return User(id: json['id'], username: json['username']);
+        return User.fromJson(json);
       },
     );
 
