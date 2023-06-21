@@ -1,6 +1,6 @@
 import '../../../../domain/either.dart';
 import '../../../../domain/enums.dart';
-import '../../../../domain/models/user.dart';
+import '../../../../domain/models/user/user.dart';
 import '../../../../domain/repositories/authentication_repository.dart';
 import '../../../global/state_notifier.dart';
 import 'sign_in_state.dart';

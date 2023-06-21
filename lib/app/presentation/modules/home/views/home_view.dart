@@ -21,6 +21,9 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (sessionController.state?.avatarPath != null)
+                Image.network(
+                    'https://image.tmdb.org/t/p/w500${sessionController.state!.avatarPath}'),
               Text(sessionController.state?.username ?? ''),
               TextButton(
                 onPressed: () async {
