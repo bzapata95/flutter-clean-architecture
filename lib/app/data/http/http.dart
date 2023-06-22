@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-import '../../domain/either.dart';
+import '../../domain/either/either.dart';
 
 part 'failure.dart';
 part 'log.dart';
@@ -120,7 +120,12 @@ class Http {
 
         return Either.right(onSuccess(responseBody));
       }
-      return Either.left(HttpFailure(statusCode: statusCode));
+      return Either.left(
+        HttpFailure(
+          statusCode: statusCode,
+          data: responseBody,
+        ),
+      );
     } catch (e, s) {
       stackTrace = s;
       logs = {

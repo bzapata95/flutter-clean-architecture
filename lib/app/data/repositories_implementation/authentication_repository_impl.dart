@@ -1,4 +1,4 @@
-import '../../domain/either.dart';
+import '../../domain/either/either.dart';
 import '../../domain/failures/sign_in_failure/sign_in_failure.dart';
 import '../../domain/models/user/user.dart';
 import '../../domain/repositories/authentication_repository.dart';

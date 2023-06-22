@@ -1,4 +1,4 @@
-import '../../../domain/either.dart';
+import '../../../domain/either/either.dart';
 import '../../../domain/failures/sign_in_failure/sign_in_failure.dart';
 import '../../http/http.dart';
 
@@ -11,6 +11,10 @@ class AuthenticationAPI {
     if (failure.statusCode != null) {
       switch (failure.statusCode) {
         case 401:
+          if (failure.data is Map &&
+              (failure.data as Map)['status_code'] == 32) {
+            return Either.left(SignInFailureNotVerified());
+          }
           return Either.left(SignInFailureUnauthorized());
         case 404:
         case 400:
