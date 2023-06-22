@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../domain/enums.dart';
 import '../../../../global/controllers/session_controller.dart';
 import '../../../../routes/routes.dart';
 import '../../controller/sign_in_controller.dart';
@@ -38,20 +37,21 @@ class SubmitButton extends StatelessWidget {
     if (!controller.mounted) return;
 
     result.when(
-      (failure) {
-        final message = {
-          SignInFailure.notFound: 'Not found',
-          SignInFailure.unauthorized: 'Unauthorized',
-          SignInFailure.unknown: 'Error',
-          SignInFailure.network: 'Internet error',
-        }[failure];
+      left: (failure) {
+        final message = failure.when(
+          notFound: () => 'Not found',
+          network: () => 'Internet error',
+          unauthorized: () => 'Unauthorized',
+          unknown: () => 'Error',
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message!),
+            content: Text(message),
           ),
         );
       },
-      (user) {
+      right: (user) {
         final SessionController sessionController = context.read();
         sessionController.setUser(user);
         Navigator.pushReplacementNamed(

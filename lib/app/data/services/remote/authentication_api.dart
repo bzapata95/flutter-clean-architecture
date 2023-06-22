@@ -1,5 +1,5 @@
 import '../../../domain/either.dart';
-import '../../../domain/enums.dart';
+import '../../../domain/failures/sign_in_failure/sign_in_failure.dart';
 import '../../http/http.dart';
 
 class AuthenticationAPI {
@@ -11,18 +11,18 @@ class AuthenticationAPI {
     if (failure.statusCode != null) {
       switch (failure.statusCode) {
         case 401:
-          return Either.left(SignInFailure.unauthorized);
+          return Either.left(SignInFailureUnauthorized());
         case 404:
         case 400:
-          return Either.left(SignInFailure.notFound);
+          return Either.left(SignInFailureNotFound());
         default:
-          return Either.left(SignInFailure.unknown);
+          return Either.left(SignInFailureUnknown());
       }
     }
     if (failure.exception is NetworkException) {
-      return Either.left(SignInFailure.network);
+      return Either.left(SignInFailureNetwork());
     }
-    return Either.left(SignInFailure.unknown);
+    return Either.left(SignInFailureUnknown());
   }
 
   Future<Either<SignInFailure, String>> createRequestToken() async {
@@ -34,9 +34,11 @@ class AuthenticationAPI {
       },
     );
 
-    return result.when(_handleFailure, (responseBody) {
-      return Either.right(responseBody);
-    });
+    return result.when(
+        left: _handleFailure,
+        right: (responseBody) {
+          return Either.right(responseBody);
+        });
   }
 
   Future<Either<SignInFailure, String>> createSessionWithLogin({
@@ -59,9 +61,11 @@ class AuthenticationAPI {
       },
     );
 
-    return result.when(_handleFailure, (responseBody) {
-      return Either.right(responseBody);
-    });
+    return result.when(
+        left: _handleFailure,
+        right: (responseBody) {
+          return Either.right(responseBody);
+        });
   }
 
   Future<Either<SignInFailure, String>> createSession(
@@ -78,8 +82,10 @@ class AuthenticationAPI {
       },
     );
 
-    return result.when(_handleFailure, (sessionId) {
-      return Either.right(sessionId);
-    });
+    return result.when(
+        left: _handleFailure,
+        right: (sessionId) {
+          return Either.right(sessionId);
+        });
   }
 }

@@ -1,5 +1,5 @@
 import '../../domain/either.dart';
-import '../../domain/enums.dart';
+import '../../domain/failures/sign_in_failure/sign_in_failure.dart';
 import '../../domain/models/user/user.dart';
 import '../../domain/repositories/authentication_repository.dart';
 import '../services/local/session_service.dart';
@@ -31,35 +31,38 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   ) async {
     final requestToken = await _authenticationAPI.createRequestToken();
 
-    return requestToken.when((failure) {
-      return Either.left(failure);
-    }, (requestToken) async {
-      final loginResult = await _authenticationAPI.createSessionWithLogin(
-        username: username,
-        password: password,
-        requestToken: requestToken,
-      );
+    return requestToken.when(
+      left: (failure) {
+        return Either.left(failure);
+      },
+      right: (requestToken) async {
+        final loginResult = await _authenticationAPI.createSessionWithLogin(
+          username: username,
+          password: password,
+          requestToken: requestToken,
+        );
 
-      return loginResult.when(
-        (failure) async => Either.left(failure),
-        (newRequestToken) async {
-          final sessionResult =
-              await _authenticationAPI.createSession(newRequestToken);
+        return loginResult.when(
+          left: (failure) async => Either.left(failure),
+          right: (newRequestToken) async {
+            final sessionResult =
+                await _authenticationAPI.createSession(newRequestToken);
 
-          return sessionResult.when(
-            (failure) async => Either.left(failure),
-            (sessionId) async {
-              await _sessionService.saveSessionId(sessionId);
-              final user = await _accountAPI.getAccount(sessionId);
-              if (user == null) {
-                return Either.left(SignInFailure.unknown);
-              }
-              return Either.right(user);
-            },
-          );
-        },
-      );
-    });
+            return sessionResult.when(
+              left: (failure) async => Either.left(failure),
+              right: (sessionId) async {
+                await _sessionService.saveSessionId(sessionId);
+                final user = await _accountAPI.getAccount(sessionId);
+                if (user == null) {
+                  return Either.left(SignInFailureUnknown());
+                }
+                return Either.right(user);
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   @override

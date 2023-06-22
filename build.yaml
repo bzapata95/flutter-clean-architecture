@@ -6,3 +6,10 @@ targets:
           include:
             - lib/app/domain/models/**/*
             - lib/app/domain/models/*
+      freezed:
+        generate_for:
+          include:
+            - lib/app/presentation/**/**_state.dart
+            - lib/app/domain/models/**/*
+            - lib/app/domain/failures/**/*
+            - lib/app/domain/either.dart

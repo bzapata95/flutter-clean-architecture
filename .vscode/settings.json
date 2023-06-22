@@ -5,6 +5,7 @@
   },
   "command-runner.commands": {
     "build_runner": "flutter pub run build_runner build",
+    "build_runner delete conflicting": "flutter pub run build_runner build --delete-conflicting-outputs",
     "pub get": "flutter pub get"
   }
 }
