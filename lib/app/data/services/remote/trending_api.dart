@@ -16,7 +16,7 @@ class TrendingAPI {
     final result = await _http.request(
       '/trending/all/${timeWindow.name}',
       onSuccess: (json) {
-        final list = json['result'] as List<Json>;
+        final list = List<Json>.from(json['results']);
         final items = list
             .where((element) => element['media_type'] != 'person')
             .map((e) => Media.fromJson(e))

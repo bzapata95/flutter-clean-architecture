@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../../global/controllers/session_controller.dart';
-import '../../../routes/routes.dart';
+import 'widgets/trending_list.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -14,26 +12,15 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    final SessionController sessionController = context.read();
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (sessionController.state?.avatarPath != null)
-                Image.network(
-                    'https://image.tmdb.org/t/p/w500${sessionController.state!.avatarPath}'),
-              Text(sessionController.state?.username ?? ''),
-              TextButton(
-                onPressed: () async {
-                  await sessionController.signOut();
-                  if (mounted) {
-                    Navigator.pushReplacementNamed(context, Routes.singIn);
-                  }
-                },
-                child: const Text('Sign out'),
+              SizedBox(
+                height: 10,
               ),
+              TrendingList(),
             ],
           ),
         ),
