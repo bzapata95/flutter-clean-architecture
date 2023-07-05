@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../domain/enums.dart';
+import '../../../../../../domain/enums.dart';
 
 class TrendingTimeWindow extends StatelessWidget {
   const TrendingTimeWindow({

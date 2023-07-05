@@ -44,3 +44,15 @@ Object? readTitleValue(Map map, String _) {
 Object? readOriginalTitleValue(Map map, String _) {
   return map['original_title'] ?? map['original_name'];
 }
+
+List<Media> getMediaList(List list) {
+  return list
+      .where(
+        (element) =>
+            element['media_type'] != 'person' &&
+            element['poster_path'] != null &&
+            element['backdrop_path'] != null,
+      )
+      .map((e) => Media.fromJson(e))
+      .toList();
+}

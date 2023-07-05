@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../domain/either/either.dart';
-import '../../../../../domain/enums.dart';
-import '../../../../../domain/failures/http_request/http_request_failure.dart';
-import '../../../../../domain/models/media/media.dart';
-import '../../../../../domain/repositories/trending_repository.dart';
+import '../../../../../../domain/either/either.dart';
+import '../../../../../../domain/enums.dart';
+import '../../../../../../domain/failures/http_request/http_request_failure.dart';
+import '../../../../../../domain/models/media/media.dart';
+import '../../../../../../domain/repositories/trending_repository.dart';
 import 'trending_tile.dart';
 import 'trending_time_window.dart';
 
