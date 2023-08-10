@@ -19,7 +19,7 @@ class _HomeViewState extends State<HomeView> {
     return ChangeNotifierProvider(
       create: (_) {
         final controller = HomeController(
-          HomeState(loading: true),
+          HomeState(),
           trendingRepository: context.read(),
         );
 
@@ -29,8 +29,10 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         body: SafeArea(
             child: LayoutBuilder(
-          builder: (_, constraints) => RefreshIndicator.adaptive(
-            onRefresh: () async {},
+          builder: (context, constraints) => RefreshIndicator.adaptive(
+            onRefresh: () async {
+              await context.read<HomeController>().init();
+            },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: SizedBox(
