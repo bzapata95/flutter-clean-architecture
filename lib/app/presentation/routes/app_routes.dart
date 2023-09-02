@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../modules/home/views/home_view.dart';
-import '../modules/movie/views/movie_view.dart';
 import '../modules/offline/views/offline_view.dart';
 import '../modules/sign_in/views/sign_in_view.dart';
 import '../modules/splash/views/splash_view.dart';
@@ -13,8 +12,5 @@ Map<String, Widget Function(BuildContext)> get apRoutes {
     Routes.singIn: (_) => const SignInView(),
     Routes.home: (_) => const HomeView(),
     Routes.offline: (_) => const OfflineView(),
-    Routes.movie: (context) => MovieView(
-          movieId: ModalRoute.of(context)?.settings.arguments as int,
-        ),
   };
 }
