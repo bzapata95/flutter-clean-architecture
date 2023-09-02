@@ -1,10 +1,16 @@
+import '../../../domain/either/either.dart';
+import '../../../domain/failures/http_request/http_request_failure.dart';
+import '../../../domain/models/media/media.dart';
 import '../../../domain/models/user/user.dart';
 import '../../http/http.dart';
+import '../local/session_service.dart';
+import '../utils/handle_failure.dart';
 
 class AccountAPI {
-  AccountAPI(this._http);
+  AccountAPI(this._http, this._sessionService);
 
   final Http _http;
+  final SessionService _sessionService;
 
   Future<User?> getAccount(String sessionId) async {
     final result = await _http.request(
@@ -20,6 +26,41 @@ class AccountAPI {
     return result.when(
       left: (_) => null,
       right: (user) => user,
+    );
+  }
+
+  Future<Either<HttpRequestFailure, Map<int, Media>>> getFavorites(
+      MediaType type) async {
+    final sessionId = await _sessionService.sessionId ?? '';
+    final accountId = await _sessionService.accountId;
+
+    final result = await _http.request(
+      '/account/$accountId/favorite/${type == MediaType.movie ? 'movies' : 'tv'}',
+      queryParameters: {
+        'session_id': sessionId,
+      },
+      onSuccess: (json) {
+        final list = json['results'] as List;
+
+        final iterable = list.map((e) {
+          final media = Media.fromJson({
+            ...e,
+            'media_type': type.name,
+          });
+          return MapEntry(media.id, media);
+        });
+
+        final map = <int, Media>{};
+
+        map.addEntries(iterable);
+
+        return map;
+      },
+    );
+
+    return result.when(
+      left: handleHttpFailure,
+      right: (value) => Either.right(value),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../domain/repositories/account_repository.dart';
 import '../../../../domain/repositories/authentication_repository.dart';
 import '../../../../domain/repositories/connectivity_repository.dart';
+import '../../../global/controllers/favorites/favorites_controller.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../routes/routes.dart';
 
@@ -30,6 +31,7 @@ class _SplashViewState extends State<SplashView> {
         Provider.of<ConnectivityRepository>(context, listen: false);
     final AccountRepository accountRepository = context.read();
     final SessionController sessionController = context.read();
+    final FavoritesController favoritesController = context.read();
 
     final hasInternet = await connectivityRepository.hasInternetConnection;
 
@@ -40,6 +42,7 @@ class _SplashViewState extends State<SplashView> {
         final user = await accountRepository.getUserData();
         if (user != null) {
           sessionController.setUser(user);
+          favoritesController.init();
           _goTo(Routes.home);
         } else {
           _goTo(Routes.singIn);
