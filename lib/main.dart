@@ -26,6 +26,7 @@ import 'app/my_app.dart';
 import 'app/presentation/global/controllers/favorites/favorites_controller.dart';
 import 'app/presentation/global/controllers/favorites/state/favorites_state.dart';
 import 'app/presentation/global/controllers/session_controller.dart';
+import 'app/presentation/global/controllers/theme_controller.dart';
 
 main() {
   setPathUrlStrategy();
@@ -62,6 +63,9 @@ main() {
           create: (_) => TrendingRepositoryImpl(TrendingAPI(httpService))),
       Provider<MoviesRepository>(
           create: (_) => MoviesRepositoryImpl(MoviesAPI(httpService))),
+      ChangeNotifierProvider<ThemeController>(
+        create: (_) => ThemeController(false),
+      ),
       ChangeNotifierProvider<SessionController>(
           create: (context) => SessionController(
                 authenticationRepository: context.read(),

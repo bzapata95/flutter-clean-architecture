@@ -24,8 +24,6 @@ class _HomeViewState extends State<HomeView> {
       )..init(),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1,
           actions: [
             IconButton(
               onPressed: () {
@@ -33,14 +31,14 @@ class _HomeViewState extends State<HomeView> {
               },
               icon: const Icon(
                 Icons.favorite,
-                color: Colors.black,
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.profile);
+              },
               icon: const Icon(
                 Icons.person,
-                color: Colors.black,
               ),
             ),
           ],
