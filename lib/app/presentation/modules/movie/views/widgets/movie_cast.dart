@@ -6,6 +6,7 @@ import '../../../../../domain/either/either.dart';
 import '../../../../../domain/failures/http_request/http_request_failure.dart';
 import '../../../../../domain/models/performer/performer.dart';
 import '../../../../../domain/repositories/movies_repository.dart';
+import '../../../../global/extensions/build_context_ext.dart';
 import '../../../../global/utils/get_image_url.dart';
 import '../../../../global/widgets/request_failed.dart';
 
@@ -54,14 +55,11 @@ class _MovieCastState extends State<MovieCast> {
             right: (performers) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(15),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
                       child: Text(
                         'Cast',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: context.textTheme.titleMedium,
                       ),
                     ),
                     SizedBox(
@@ -99,9 +97,7 @@ class _MovieCastState extends State<MovieCast> {
                               ),
                               Text(
                                 performer.name,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                ),
+                                style: context.textTheme.bodySmall,
                               ),
                             ],
                           );
