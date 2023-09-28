@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../generated/assets.gen.dart';
+import '../../../generated/translations.g.dart';
 
 class RequestFailed extends StatelessWidget {
   const RequestFailed({
@@ -21,15 +22,15 @@ class RequestFailed extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(child: Assets.images.error404.image()),
-          Text(text ?? 'Request Failed'),
+          Text(text ?? translation.mics.requestFailed),
           const SizedBox(
             height: 10,
           ),
           MaterialButton(
             onPressed: onRetry,
             color: Colors.blue,
-            child: const Text(
-              'Retry',
+            child: Text(
+              translation.mics.retry,
             ),
           ),
           const SizedBox(

@@ -3,20 +3,22 @@ import '../../../domain/failures/http_request/http_request_failure.dart';
 import '../../../domain/models/media/media.dart';
 import '../../../domain/models/user/user.dart';
 import '../../http/http.dart';
+import '../local/language_service.dart';
 import '../local/session_service.dart';
 import '../utils/handle_failure.dart';
 
 class AccountAPI {
-  AccountAPI(this._http, this._sessionService);
+  AccountAPI(this._http, this._sessionService, this._languageService);
 
   final Http _http;
   final SessionService _sessionService;
+  final LanguageService _languageService;
 
   Future<User?> getAccount(String sessionId) async {
     final result = await _http.request(
       '/account/11835556',
       queryParameters: {
-        'session_id': sessionId,
+        'language': _languageService.languageCode,
       },
       onSuccess: (json) {
         return User.fromJson(json);
@@ -38,6 +40,7 @@ class AccountAPI {
       '/account/$accountId/favorite/${type == MediaType.movie ? 'movies' : 'tv'}',
       queryParameters: {
         'session_id': sessionId,
+        'language': _languageService.languageCode,
       },
       onSuccess: (json) {
         final list = json['results'] as List;
@@ -77,6 +80,7 @@ class AccountAPI {
       method: HttpMethod.post,
       queryParameters: {
         'session_id': sessionId,
+        'language': _languageService.languageCode,
       },
       body: {
         'media_type': type.name,

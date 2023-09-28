@@ -1,4 +1,16 @@
 {
   "username": "Username",
-  "password": "Password"
+  "password": "Password",
+  "errors": {
+    "username": "Invalid username",
+    "password": "Invalid password",
+    "submit": {
+      "notFound": "Not found",
+      "network": "Internet error",
+      "unauthorized": "Unauthorized",
+      "unknown": "Error",
+      "notVerified": "Not verified"
+    }
+  },
+  "signIn": "Sign In"
 }

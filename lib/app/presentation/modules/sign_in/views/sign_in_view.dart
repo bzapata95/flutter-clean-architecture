@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../generated/translations.g.dart';
 import '../controller/sign_in_controller.dart';
 import '../controller/state/sign_in_state.dart';
 import 'widgets/submit_button.dart';
@@ -36,11 +37,13 @@ class SignInView extends StatelessWidget {
                         onChanged: (text) {
                           controller.onUsernameChanged(text);
                         },
-                        decoration: const InputDecoration(hintText: 'Username'),
+                        decoration: InputDecoration(
+                          hintText: translation.signIn.username,
+                        ),
                         validator: (value) {
                           value = value?.trim().toLowerCase() ?? '';
                           if (value.isEmpty) {
-                            return 'Invalid username';
+                            return translation.signIn.errors.username;
                           }
                           return null;
                         },
@@ -53,11 +56,13 @@ class SignInView extends StatelessWidget {
                         onChanged: (text) {
                           controller.onPasswordChanged(text);
                         },
-                        decoration: const InputDecoration(hintText: 'Password'),
+                        decoration: InputDecoration(
+                          hintText: translation.signIn.password,
+                        ),
                         validator: (value) {
                           value = value?.replaceAll(' ', '') ?? '';
                           if (value.length < 4) {
-                            return 'Invalid password';
+                            return translation.signIn.errors.password;
                           }
                           return null;
                         },

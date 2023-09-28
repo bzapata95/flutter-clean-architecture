@@ -13,6 +13,7 @@ import 'app/data/repositories_implementation/connectivity_repository_impl.dart';
 import 'app/data/repositories_implementation/movies_repository_impl.dart';
 import 'app/data/repositories_implementation/preferences_repository_impl.dart';
 import 'app/data/repositories_implementation/trending_repository_impl.dart';
+import 'app/data/services/local/language_service.dart';
 import 'app/data/services/local/session_service.dart';
 import 'app/data/services/remote/account_api.dart';
 import 'app/data/services/remote/authentication_api.dart';
@@ -36,6 +37,9 @@ main() async {
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   LocaleSettings.useDeviceLocale(); // Language application
+
+  final languageService =
+      LanguageService(LocaleSettings.currentLocale.languageCode);
 
   final sessionService = SessionService(
     const FlutterSecureStorage(),
@@ -70,18 +74,20 @@ main() async {
         create: (_) => AuthenticationRepositoryImpl(
           AuthenticationAPI(httpService),
           sessionService,
-          AccountAPI(httpService, sessionService),
+          AccountAPI(httpService, sessionService, languageService),
         ),
       ),
       Provider<AccountRepository>(
           create: (_) => AccountRepositoryImpl(
-                AccountAPI(httpService, sessionService),
+                AccountAPI(httpService, sessionService, languageService),
                 sessionService,
               )),
       Provider<TrendingRepository>(
-          create: (_) => TrendingRepositoryImpl(TrendingAPI(httpService))),
+          create: (_) => TrendingRepositoryImpl(
+              TrendingAPI(httpService, languageService))),
       Provider<MoviesRepository>(
-          create: (_) => MoviesRepositoryImpl(MoviesAPI(httpService))),
+          create: (_) =>
+              MoviesRepositoryImpl(MoviesAPI(httpService, languageService))),
       ChangeNotifierProvider<ThemeController>(
         create: (context) {
           final PreferencesRepository preferencesRepository = context.read();

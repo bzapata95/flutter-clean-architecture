@@ -7,6 +7,7 @@
     "build_runner": "flutter pub run build_runner build",
     "build_runner delete conflicting": "flutter pub run build_runner build --delete-conflicting-outputs",
     "pub get": "flutter pub get",
-    "flutter_gen": "flutter pub run flutter_gen:flutter_gen_command"
+    "flutter_gen": "flutter pub run flutter_gen:flutter_gen_command",
+    "gen_slang": "dart run slang"
   }
 }
