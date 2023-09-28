@@ -18,7 +18,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
+    final languageCode = Localizations.localeOf(context).languageCode;
     return ChangeNotifierProvider(
+      key: Key('home-$languageCode'),
       create: (_) => HomeController(
         HomeState(),
         trendingRepository: context.read(),
