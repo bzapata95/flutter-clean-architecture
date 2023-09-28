@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -46,17 +44,22 @@ main() async {
     token:
         'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzEyN2Y3ZGQ2MGViOTFmOWQwMzdkMGU1ZWZjNTlkOSIsInN1YiI6IjYxZjMzZGMyYTZmZGFhMDBjNDkxMjkyNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Ee9VlY2TQ11oB9gWMXl9d87XDJ1owgDNBrRO5sEeO7o',
   );
-  final systemDarkMode = ui.window.platformBrightness == Brightness.dark;
+  final systemDarkMode =
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark;
 
   final preferences = await SharedPreferences.getInstance();
+
+  final connectivity = ConnectivityRepositoryImpl(
+    Connectivity(),
+    InternetChecker(),
+  );
+  await connectivity.initialize();
 
   runApp(MultiProvider(
     providers: [
       Provider<ConnectivityRepository>(
-        create: (_) => ConnectivityRepositoryImpl(
-          Connectivity(),
-          InternetChecker(),
-        ),
+        create: (_) => connectivity,
       ),
       Provider<PreferencesRepository>(
         create: (_) => PreferencesRepositoryImpl(preferences),
