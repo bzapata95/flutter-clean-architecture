@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../inject_repositories.dart';
 import '../../../global/widgets/my_scaffold.dart';
 import '../../../routes/routes.dart';
 import '../controllers/home_controller.dart';
@@ -23,7 +24,7 @@ class _HomeViewState extends State<HomeView> {
       key: Key('home-$languageCode'),
       create: (_) => HomeController(
         HomeState(),
-        trendingRepository: context.read(),
+        trendingRepository: Repositories.trending,
       )..init(),
       child: MyScaffold(
         appBar: AppBar(

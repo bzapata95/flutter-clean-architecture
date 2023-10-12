@@ -3,8 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'domain/repositories/language_repository.dart';
 import 'generated/translations.g.dart';
+import 'inject_repositories.dart';
 import 'presentation/global/controllers/theme_controller.dart';
 import 'presentation/global/theme.dart';
 import 'presentation/routes/app_routes.dart';
@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeLocales(List<Locale>? locales) {
     if (locales?.isNotEmpty ?? false) {
       final locale = locales!.first;
-      context.read<LanguageRepository>().setLanguageCode(locale.languageCode);
+      Repositories.language.setLanguageCode(locale.languageCode);
       Intl.defaultLocale = locale.toLanguageTag();
       LocaleSettings.setLocaleRaw(locale.languageCode);
     }

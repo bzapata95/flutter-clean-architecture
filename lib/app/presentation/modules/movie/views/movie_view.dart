@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../inject_repositories.dart';
 import '../../../global/widgets/request_failed.dart';
 import '../controller/movie_controller.dart';
 import '../controller/state/movie_state.dart';
@@ -16,7 +17,7 @@ class MovieView extends StatelessWidget {
     return ChangeNotifierProvider(
         create: (_) => MovieController(
               MovieState.loading(),
-              moviesRepository: context.read(),
+              moviesRepository: Repositories.movies,
               movieId: movieId,
             )..init(),
         builder: (context, _) {

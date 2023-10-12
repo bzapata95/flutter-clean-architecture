@@ -8,28 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'app/data/http/http.dart';
-import 'app/data/repositories_implementation/account_repository_impl.dart';
-import 'app/data/repositories_implementation/authentication_repository_impl.dart';
-import 'app/data/repositories_implementation/connectivity_repository_impl.dart';
-import 'app/data/repositories_implementation/language_repository_impl.dart';
-import 'app/data/repositories_implementation/movies_repository_impl.dart';
-import 'app/data/repositories_implementation/preferences_repository_impl.dart';
-import 'app/data/repositories_implementation/trending_repository_impl.dart';
-import 'app/data/services/local/language_service.dart';
-import 'app/data/services/local/session_service.dart';
-import 'app/data/services/remote/account_api.dart';
-import 'app/data/services/remote/authentication_api.dart';
 import 'app/data/services/remote/internet_checker.dart';
-import 'app/data/services/remote/movies_api.dart';
-import 'app/data/services/remote/trending_api.dart';
-import 'app/domain/repositories/account_repository.dart';
-import 'app/domain/repositories/authentication_repository.dart';
-import 'app/domain/repositories/connectivity_repository.dart';
-import 'app/domain/repositories/language_repository.dart';
-import 'app/domain/repositories/movies_repository.dart';
-import 'app/domain/repositories/preferences_repository.dart';
-import 'app/domain/repositories/trending_repository.dart';
 import 'app/generated/translations.g.dart';
+import 'app/inject_repositories.dart';
 import 'app/my_app.dart';
 import 'app/presentation/global/controllers/favorites/favorites_controller.dart';
 import 'app/presentation/global/controllers/favorites/state/favorites_state.dart';
@@ -42,12 +23,6 @@ main() async {
   LocaleSettings.useDeviceLocale(); // Language application
   Intl.defaultLocale = LocaleSettings.currentLocale.languageTag;
 
-  final languageService =
-      LanguageService(LocaleSettings.currentLocale.languageCode);
-
-  final sessionService = SessionService(
-    const FlutterSecureStorage(),
-  );
   final httpService = Http(
     client: http.Client(),
     baseUrl: 'https://api.themoviedb.org/3',
@@ -58,60 +33,35 @@ main() async {
       WidgetsBinding.instance.platformDispatcher.platformBrightness ==
           Brightness.dark;
 
-  final preferences = await SharedPreferences.getInstance();
-
-  final connectivity = ConnectivityRepositoryImpl(
-    Connectivity(),
-    InternetChecker(),
+  await injectRepository(
+    systemDarkMode: systemDarkMode,
+    http: httpService,
+    languageCode: LocaleSettings.currentLocale.languageCode,
+    secureStorage: const FlutterSecureStorage(),
+    preferences: await SharedPreferences.getInstance(),
+    connectivity: Connectivity(),
+    internetChecker: InternetChecker(),
   );
-  await connectivity.initialize();
 
   runApp(MultiProvider(
     providers: [
-      Provider<ConnectivityRepository>(
-        create: (_) => connectivity,
-      ),
-      Provider<LanguageRepository>(
-        create: (_) => LanguageRepositoryImpl(languageService),
-      ),
-      Provider<PreferencesRepository>(
-        create: (_) => PreferencesRepositoryImpl(preferences),
-      ),
-      Provider<AuthenticationRepository>(
-        create: (_) => AuthenticationRepositoryImpl(
-          AuthenticationAPI(httpService),
-          sessionService,
-          AccountAPI(httpService, sessionService, languageService),
-        ),
-      ),
-      Provider<AccountRepository>(
-          create: (_) => AccountRepositoryImpl(
-                AccountAPI(httpService, sessionService, languageService),
-                sessionService,
-              )),
-      Provider<TrendingRepository>(
-          create: (_) => TrendingRepositoryImpl(
-              TrendingAPI(httpService, languageService))),
-      Provider<MoviesRepository>(
-          create: (_) =>
-              MoviesRepositoryImpl(MoviesAPI(httpService, languageService))),
       ChangeNotifierProvider<ThemeController>(
         create: (context) {
-          final PreferencesRepository preferencesRepository = context.read();
+          final preferencesRepository = Repositories.preferences;
           return ThemeController(
-            preferencesRepository.darkMode ?? systemDarkMode,
+            preferencesRepository.darkMode,
             preferencesRepository: preferencesRepository,
           );
         },
       ),
       ChangeNotifierProvider<SessionController>(
           create: (context) => SessionController(
-                authenticationRepository: context.read(),
+                authenticationRepository: Repositories.authentication,
               )),
       ChangeNotifierProvider<FavoritesController>(
           create: (context) => FavoritesController(
                 FavoritesState.loading(),
-                accountRepository: context.read(),
+                accountRepository: Repositories.account,
               )),
     ],
     child: TranslationProvider(

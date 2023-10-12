@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../generated/translations.g.dart';
+import '../../../../inject_repositories.dart';
 import '../controller/sign_in_controller.dart';
 import '../controller/state/sign_in_state.dart';
 import 'widgets/submit_button.dart';
@@ -14,7 +15,7 @@ class SignInView extends StatelessWidget {
     return ChangeNotifierProvider<SignInController>(
       create: (_) => SignInController(
         const SignInState(),
-        authenticationRepository: context.read(),
+        authenticationRepository: Repositories.authentication,
         sessionController: context.read(),
         favoritesController: context.read(),
       ),

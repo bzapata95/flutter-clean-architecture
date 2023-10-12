@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../domain/repositories/account_repository.dart';
-import '../../../../domain/repositories/authentication_repository.dart';
-import '../../../../domain/repositories/connectivity_repository.dart';
+import '../../../../inject_repositories.dart';
 import '../../../global/controllers/favorites/favorites_controller.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../routes/routes.dart';
@@ -25,21 +23,16 @@ class _SplashViewState extends State<SplashView> {
   }
 
   Future<void> _init() async {
-    final authenticationRepository =
-        Provider.of<AuthenticationRepository>(context, listen: false);
-    final connectivityRepository =
-        Provider.of<ConnectivityRepository>(context, listen: false);
-    final AccountRepository accountRepository = context.read();
     final SessionController sessionController = context.read();
     final FavoritesController favoritesController = context.read();
 
-    final hasInternet = connectivityRepository.hasInternetConnection;
+    final hasInternet = Repositories.connectivity.hasInternetConnection;
 
     if (hasInternet) {
-      final isSignedIn = await authenticationRepository.isSignedIn;
+      final isSignedIn = await Repositories.authentication.isSignedIn;
 
       if (isSignedIn) {
-        final user = await accountRepository.getUserData();
+        final user = await Repositories.account.getUserData();
         if (user != null) {
           sessionController.setUser(user);
           favoritesController.init();
